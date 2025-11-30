@@ -1,0 +1,5 @@
+git_repos:
+- url: https://github.com/raanand-home/aryon-main-terraform
+  is_terraform: true
+  ecr_repo:
+  - name: aryon-main-terraform
