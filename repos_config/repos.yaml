@@ -8,6 +8,10 @@ git_repos:
   is_terraform: true
   ecr_repo: []
   attached_policies: ["AdministratorAccess"]
+- url: https://github.com/raanand-home/aryon-app-terraform
+  is_terraform: true
+  ecr_repo: []
+  attached_policies: ["AdministratorAccess"]
 - url: https://github.com/raanand-home/aryon-infra
   is_terraform: true
   ecr_repo: []
