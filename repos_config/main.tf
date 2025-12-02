@@ -38,6 +38,7 @@ module "per_git_repo" {
   terraform_dynamo_db_lock_table = var.terraform_dynamo_db_lock_table
   push_to_ecrs = each.value["ecr_repo"] != null ? [for x in  each.value["ecr_repo"]:aws_ecr_repository.ecr_repo[x["name"]]] : []
   code_artifects_bucket = module.code_artifects
+  attached_policies = lookup(each.value,"attached_policies",[])
 }
 
 module "code_artifects" {

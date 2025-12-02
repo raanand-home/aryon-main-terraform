@@ -1,5 +1,17 @@
 git_repos:
+
+- url: https://github.com/raanand-home/aryon-app
+  ecr_repo:
+  - name: audit-service
+  - name: items-service
 - url: https://github.com/raanand-home/aryon-main-terraform
   is_terraform: true
+  ecr_repo: []
+  attached_policies: ["AdministratorAccess"]
+- url: https://github.com/raanand-home/aryon-infra
+  is_terraform: true
+  ecr_repo: []
+  attached_policies: ["AdministratorAccess"]
+- url: https://github.com/raanand-home/aryon-env-cli 
   ecr_repo:
-  - name: aryon-main-terraform
+  - name: env-cli

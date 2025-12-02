@@ -14,9 +14,11 @@ variable "push_to_ecrs" {
 variable "is_terraform" {
   type    = bool
 }
-variable "group" {
+
+variable "attached_policies" {
   type = list(string)
 }
+
 variable "oidc_provider" {
   type = object({
     arn = string
@@ -45,7 +47,21 @@ locals {
   s3_write = flatten(concat([merge(var.code_artifects_bucket,{path = "${var.name}/"})],var.is_terraform ? [var.terraform_bucket] : []))
 }
 
-
+locals {
+  allow_read_from_all_images_in_the_account = [{
+    Action = [ "ecr:BatchGetImage",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:DescribeRepositories",
+                "ecr:DescribeImages"]
+    Resource = ["*"]
+    
+  },{
+      Action   = ["ecr:GetAuthorizationToken"],
+      Resource = ["*"]
+  }
+  ]
+}
 module "aws_policy" {
   source = "../../modules/iam_role_policy"
   group = var.group
@@ -54,5 +70,7 @@ module "aws_policy" {
   s3_write = local.s3_write
   s3_read = local.s3_read
   push_to_ecr = var.push_to_ecrs
+  statements = local.allow_read_from_all_images_in_the_account
+  attached_policies = var.attached_policies
 
 }
