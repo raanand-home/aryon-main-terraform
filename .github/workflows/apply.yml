@@ -1,0 +1,43 @@
+name: Apply
+
+
+on:
+  push:
+    branches: [ main ]
+env:
+    TG_NON_INTERACTIVE: true
+jobs:
+  apply:
+    # Use a standard runner
+    runs-on: ubuntu-latest
+    
+    # Environment is optional but good practice for deployments
+
+    permissions:
+      id-token: write        # REQUIRED for OIDC
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::027574771246:role/repos_config-aryon-main-terraform
+          aws-region: eu-central-1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - run: |
+            echo $PATH
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.14.0"
+      - name: Install Terragrunt
+        run: |
+            set -ex;
+            curl -L https://github.com/gruntwork-io/terragrunt/releases/download/v0.93.12/terragrunt_linux_amd64.tar.gz --output /tmp/terragrunt.tar.gz;
+            mkdir -p /home/runner/.local/bin;
+            tar  -O -xzvf /tmp/terragrunt.tar.gz terragrunt_linux_amd64 > /home/runner/.local/bin/terragrunt;
+            chmod +x /home/runner/.local/bin/terragrunt
+      - name: apply
+        run: terragrunt run --all apply
