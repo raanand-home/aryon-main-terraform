@@ -15,3 +15,5 @@ git_repos:
 - url: https://github.com/raanand-home/aryon-env-cli 
   ecr_repo:
   - name: env-cli
+  python_packages:
+  - env-cli

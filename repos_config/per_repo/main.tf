@@ -38,6 +38,9 @@ variable "terraform_bucket" {
 variable "code_artifects_bucket" {
   
 }
+variable "python_packages" {
+  type = list(string)
+}
 module "iam_role" {
   source = "../../modules/aws_iam_role"
   group = var.group
@@ -62,7 +65,17 @@ locals {
       Action   = ["ecr:GetAuthorizationToken"],
       Resource = ["*"]
   }
+  
   ]
+  allow_read_from_codeartifect = [{
+    Action = ["codeartifact:GetAuthorizationToken","sts:GetServiceBearerToken","codeartifact:GetRepositoryEndpoint"]
+    Resource = ["*"]
+  }]
+  python_packages_statements = [for x in var.python_packages: {
+    Action =["codeartifact:PublishPackageVersion"]
+    Resource = ["arn:aws:codeartifact:eu-central-1:027574771246:package/aryon/private/pypi//${x}"]
+  }]
+  all_statements = concat(local.allow_read_from_codeartifect,local.allow_read_from_all_images_in_the_account,local.python_packages_statements)
 }
 module "aws_policy" {
   source = "../../modules/iam_role_policy"
@@ -72,7 +85,7 @@ module "aws_policy" {
   s3_write = local.s3_write
   s3_read = local.s3_read
   push_to_ecr = var.push_to_ecrs
-  statements = local.allow_read_from_all_images_in_the_account
+  statements = local.all_statements
   attached_policies = var.attached_policies
 
 }
