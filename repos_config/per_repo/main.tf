@@ -14,7 +14,9 @@ variable "push_to_ecrs" {
 variable "is_terraform" {
   type    = bool
 }
-
+variable "group" {
+  type = list(string)
+}
 variable "attached_policies" {
   type = list(string)
 }
