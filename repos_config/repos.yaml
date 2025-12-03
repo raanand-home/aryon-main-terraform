@@ -4,6 +4,7 @@ git_repos:
   ecr_repo:
   - name: audit-service
   - name: items-service
+  - name: app-migration
 - url: https://github.com/raanand-home/aryon-main-terraform
   is_terraform: true
   ecr_repo: []
